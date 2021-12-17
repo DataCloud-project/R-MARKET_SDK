@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# node-waf configuration
+.lock-wscript
+
+# Dependency directory
+node_modules
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# test output
+test/out/
+test/UTC*
+test/wallet.json
+test/chain.json
+test/iexec.json
+test/orders.json
+test/deployed.json
+test/results.zip
+test/datasets/
+test/.secrets/
+test/logo.png
+
+# sonar output
+.scannerwork
