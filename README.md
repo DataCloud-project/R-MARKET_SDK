@@ -1,6 +1,10 @@
-![iExec SDK logo](./iexec_sdk_logo.jpg)
+<p align="center"><img width=50% src="https://raw.githubusercontent.com/DataCloud-project/toolbox/master/docs/img/datacloud_logo.png"></p>&nbsp;
+
+[![GitHub Issues](https://img.shields.io/github/issues/DataCloud-project/R-MARKET_SDK.svg)](https://github.com/DataCloud-project/R-MARKET_SDK/issues)
 
 # iExec SDK V6
+
+![iExec SDK logo](./iexec_sdk_logo.jpg)
 
 [![Build Status](https://drone.iex.ec/api/badges/iExecBlockchainComputing/iexec-sdk/status.svg)](https://drone.iex.ec/iExecBlockchainComputing/iexec-sdk)
 [![npm version](https://badge.fury.io/js/iexec.svg)](https://www.npmjs.com/package/iexec) [![npm version](https://img.shields.io/npm/dm/iexec.svg)](https://www.npmjs.com/package/iexec) [![license](https://img.shields.io/github/license/iExecBlockchainComputing/iexec-sdk.svg)](LICENSE) [![Twitter Follow](https://img.shields.io/twitter/follow/iex_ec.svg?style=social&label=Follow)](https://twitter.com/iex_ec)
