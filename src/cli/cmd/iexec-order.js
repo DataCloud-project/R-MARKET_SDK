@@ -494,7 +494,7 @@ publish
       ]);
       await connectKeystore(chain, keystore);
       const success = {};
-      const failed = [];
+      const failed = [];xxx
 
       const publishOrder = async (orderName) => {
         try {
