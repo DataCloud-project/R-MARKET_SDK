@@ -65,7 +65,7 @@ show
       debug('opts.download', opts.download);
 
       spinner.start(info.showing(objName));
-
+		spinner.info(`here1`);
       let taskFinalState;
       if (opts.watch) {
         taskFinalState = await new Promise((resolve, reject) => {
@@ -200,6 +200,58 @@ claim
       spinner.start(info.claiming(objName));
       const txHash = await taskModule.claim(chain.contracts, taskid);
       spinner.succeed('Task successfully claimed', { raw: { txHash } });
+    } catch (error) {
+      handleError(error, cli, opts);
+    }
+  });
+  
+const extend = cli.command('extend <taskid> <duration>');
+addGlobalOptions(extend);
+addWalletLoadOptions(extend);
+extend
+  .option(...option.chain())
+  .option(...option.txGasPrice())
+  .option(...option.txConfirms())
+  .description(desc.extendObj(objName))
+  .action(async (taskid, duration, opts) => {
+    await checkUpdate(opts);
+    const spinner = Spinner(opts);
+    try {
+      const walletOptions = await computeWalletLoadOptions(opts);
+      const keystore = Keystore(walletOptions);
+      const txOptions = await computeTxOptions(opts);
+      const chain = await loadChain(opts.chain, { txOptions, spinner });
+      await connectKeystore(chain, keystore, { txOptions });
+
+      spinner.start(info.extending(objName));
+      const txHash = await taskModule.extend(chain.contracts, taskid, duration);
+      spinner.succeed('Task successfully extended', { raw: { txHash } });
+    } catch (error) {
+      handleError(error, cli, opts);
+    }
+  });
+  
+  const interrupt = cli.command('interrupt <taskid>');
+addGlobalOptions(interrupt);
+addWalletLoadOptions(interrupt);
+interrupt
+  .option(...option.chain())
+  .option(...option.txGasPrice())
+  .option(...option.txConfirms())
+  .description(desc.interruptObj(objName))
+  .action(async (taskid, opts) => {
+    await checkUpdate(opts);
+    const spinner = Spinner(opts);
+    try {
+      const walletOptions = await computeWalletLoadOptions(opts);
+      const keystore = Keystore(walletOptions);
+      const txOptions = await computeTxOptions(opts);
+      const chain = await loadChain(opts.chain, { txOptions, spinner });
+      await connectKeystore(chain, keystore, { txOptions });
+
+      spinner.start(info.interrupting(objName));
+      const txHash = await taskModule.interrupt(chain.contracts, taskid);
+      spinner.succeed('Task successfully interrupted', { raw: { txHash } });
     } catch (error) {
       handleError(error, cli, opts);
     }
