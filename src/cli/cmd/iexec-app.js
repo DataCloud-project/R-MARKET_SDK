@@ -369,7 +369,8 @@ unpublish
 					address,
 				);
 			spinner.succeed(
-				`Successfully unpublished ${all ? 'all' : 'last'} ${objName}order${all ? 's' : ''
+				`Successfully unpublished ${all ? 'all' : 'last'} ${objName}order${
+				all ? 's' : ''
 				}`,
 				{
 					raw: {
@@ -1033,8 +1034,10 @@ requestRun
 					requestorderToSign,
 				).catch((e) => {
 					throw Error(
-						`Request requirements check failed: ${e.message
-						} (If you consider this is not an issue, use ${option.skipRequestCheck()[0]
+						`Request requirements check failed: ${
+						  e.message
+						} (If you consider this is not an issue, use ${
+						option.skipRequestCheck()[0]
 						} to skip request requirement check)`,
 					);
 				});

@@ -47,7 +47,6 @@ const {
   nRlcAmountSchema,
   throwIfMissing,
   ValidationError,
-  stringSchema,
 } = require('../utils/validator');
 const {
   wrapCall,
@@ -142,7 +141,7 @@ const objDesc = {
     structMembers: [
       { name: 'workerpool', type: 'address' },
       { name: 'workerpoolprice', type: 'uint256' },
-      { name: 'hardware', type: 'string' },
+      { name: 'taskmaxduration', type: 'uint256' },
       { name: 'volume', type: 'uint256' },
       { name: 'tag', type: 'bytes32' },
       { name: 'category', type: 'uint256' },
@@ -169,7 +168,6 @@ const objDesc = {
       { name: 'datasetmaxprice', type: 'uint256' },
       { name: 'workerpool', type: 'address' },
       { name: 'workerpoolmaxprice', type: 'uint256' },
-      { name: 'taskmaxprice', type: 'uint256' },
       { name: 'taskduration', type: 'uint256' },
       { name: 'requester', type: 'address' },
       { name: 'volume', type: 'uint256' },
@@ -1151,6 +1149,16 @@ const getMatchableVolume = async (
         `datasetmaxprice too low (expected ${datasetPrice}, got ${datasetMaxPrice})`,
       );
     }
+    
+    // duration check
+    const workerpoolDuration = new BN(vWorkerpoolOrder.taskmaxduration);
+    const requesterDuration = new BN(vRequestOrder.taskduration);
+
+    if (workerpoolDuration.lt(requesterDuration)) {
+      throw new Error(
+        `requestOrder.taskduration should be greater or equal to workerpoolOrder.taskmaxduration`,
+      );
+    }
 
     // workerpool owner stake check
     const workerpoolOwner = await getWorkerpoolOwner(
@@ -1303,7 +1311,6 @@ const matchOrders = async (
       vRequestOrder,
     );
     const iexecContract = contracts.getIExecContract();
-    //console.log(iexecContract);
     const tx = await wrapSend(
       iexecContract.matchOrders(
         appOrderStruct,
@@ -1402,7 +1409,7 @@ const createWorkerpoolorder = async (
     ethProvider: contracts.provider,
   }).validate(workerpool),
   workerpoolprice: await nRlcAmountSchema().validate(workerpoolprice),
-  hardware: await stringSchema().validate('<hardware>'),
+  taskmaxduration: await uint256Schema().validate('10000'),
   volume: await uint256Schema().validate(volume),
   category: await uint256Schema().validate(category),
   trust: await uint256Schema().validate(trust),
@@ -1428,8 +1435,7 @@ const createRequestorder = async (
     appmaxprice = '0',
     datasetmaxprice = '0',
     workerpoolmaxprice = '0',
-    taskmaxprice = '0',
-    taskduration = '100',
+    taskduration = '3600',
     volume = '1',
     requester,
     beneficiary,
@@ -1453,7 +1459,6 @@ const createRequestorder = async (
       ethProvider: contracts.provider,
     }).validate(workerpool),
     workerpoolmaxprice: await nRlcAmountSchema().validate(workerpoolmaxprice),
-    taskmaxprice: await nRlcAmountSchema().validate(taskmaxprice),
     taskduration: await uint256Schema().validate(taskduration),
     requester: await addressSchema({
       ethProvider: contracts.provider,

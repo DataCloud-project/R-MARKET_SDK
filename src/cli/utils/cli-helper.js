@@ -124,6 +124,7 @@ const desc = {
   requestRun: () => 'request an iExec application execution at limit price',
   initStorage: () => 'initialize the remote storage',
   checkStorage: () => 'check if the remote storage is initialized',
+  debugTask: () => `show task debug information`,
 };
 
 const option = {
@@ -378,9 +379,9 @@ const orderOption = {
     '--workerpool-price <amount unit...>',
     'workerpool price per task (default unit nRLC)',
   ],
-  hardware: () => [
-    '--hardware <hardware requirements...>',
-    'specify the hardware requirements of the workerpool',
+  taskmaxduration: () => [
+    '--taskmaxduration <amount>',
+    'specify the maximal duration of a task (seconds)',
   ],
   volume: () => ['--volume <volume>', 'number of run'],
   tag: () => ['--tag <tag>', 'specify tags\n* usage: --tag tag1,tag2'],
