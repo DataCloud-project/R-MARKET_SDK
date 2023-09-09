@@ -6,10 +6,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const taskModule = require('../../common/modules/task');
 const {
-  fetchTaskOffchainInfo,
-  fetchAllReplicatesLogs,
-} = require('../../common/execution/debug');
-const {
   obsTask,
   fetchTaskResults,
 } = require('../../common/modules/iexecProcess');
@@ -205,61 +201,6 @@ claim
       spinner.start(info.claiming(objName));
       const txHash = await taskModule.claim(chain.contracts, taskid);
       spinner.succeed('Task successfully claimed', { raw: { txHash } });
-    } catch (error) {
-      handleError(error, cli, opts);
-    }
-  });
-  
-const debugTask = cli.command('debug <taskid>');
-addGlobalOptions(debugTask);
-addWalletLoadOptions(debugTask);
-debugTask
-  .option(...option.chain())
-  .option('--logs', 'show application logs')
-  .description(desc.debugTask())
-  .action(async (taskid, opts) => {
-    await checkUpdate(opts);
-    const spinner = Spinner(opts);
-    try {
-      const chain = await loadChain(opts.chain, { spinner });
-
-      if (opts.logs) {
-        // Requester wallet authentiation is required to access logs
-        const walletOptions = await computeWalletLoadOptions(opts);
-        const keystore = Keystore(walletOptions);
-        await connectKeystore(chain, keystore);
-      }
-
-      spinner.start('Fetching debug information');
-      const onchainData = await taskModule.show(chain.contracts, taskid);
-      const offchainData = await fetchTaskOffchainInfo(
-        chain.contracts,
-        taskid,
-      ).catch((e) => {
-        spinner.warn(`Failed to fetch off-chain data: ${e.message}`);
-      });
-
-      const appLogs = opts.logs
-        ? await fetchAllReplicatesLogs(chain.contracts, taskid).catch((e) => {
-            spinner.warn(`Failed to fetch app logs: ${e.message}`);
-          })
-        : undefined;
-
-      const raw = {
-        onchainData: stringifyNestedBn(onchainData),
-        offchainData,
-        appLogs,
-      };
-      spinner.succeed(`Task ${taskid}:\n`, {
-        raw,
-      });
-      spinner.info(`On-chain data:\n${pretty(raw.onchainData)}\n`);
-      if (raw.offchainData) {
-        spinner.info(`Off-chain data:\n${pretty(raw.offchainData)}`);
-      }
-      if (raw.appLogs && raw.appLogs.length > 0) {
-        spinner.info(`App logs:\n${pretty(raw.appLogs)}`);
-      }
     } catch (error) {
       handleError(error, cli, opts);
     }
