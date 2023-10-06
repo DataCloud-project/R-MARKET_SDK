@@ -331,6 +331,7 @@ const deployAndGetWorkerpoolorder = async (
 			workerpool,
 			workerpoolprice,
 			taskmaxduration: '10000',
+			hardwaredescription: {},
 			volume,
 			category,
 			trust,
@@ -1105,13 +1106,13 @@ describe('[workflow]', () => {
 			showDealRes.tasks[taskIdx], '1000'
 		);
 		expect(extendTaskRes).toBeDefined();
-		
-		
+
+
 		const showTaskExtendedRes = await iexec.task.show(
 			showDealRes.tasks[taskIdx],
 		);
 		const showDealExtendedRes = await iexec.deal.show(matchOrdersRes.dealid);
-		
+
 		expect(showTaskExtendedRes.status).toBe(1);
 		expect(showTaskExtendedRes.dealid).toBe(matchOrdersRes.dealid);
 		expect(showTaskExtendedRes.idx.eq(new BN(taskIdx))).toBe(true);
@@ -1124,7 +1125,7 @@ describe('[workflow]', () => {
 		);
 		expect(showTaskExtendedRes.statusName).toBe('ACTIVE');
 	});
-	
+
 	test('extend task (too large duration)', async () => {
 		const signer = utils.getSignerFromPrivateKey(tokenChainUrl, PRIVATE_KEY);
 		const iexec = new IExec(
@@ -1137,18 +1138,18 @@ describe('[workflow]', () => {
 				resultProxyURL: 'https://result-proxy.iex.ec',
 			},
 		);
-		
+
 		const wporder = await iexec.order.createWorkerpoolorder({
 			workerpool: workerpoolorderToExtend.workerpool,
 			workerpoolprice: '0',
 			category: 5,
 			volume: '1',
 		});
-		
+
 		const signedwporder = await iexec.order.signWorkerpoolorder(wporder, {
 			checkRequest: false,
 		});
-		
+
 		const order = await iexec.order.createRequestorder({
 			app: apporder.app,
 			appmaxprice: apporder.appprice,
@@ -1163,7 +1164,7 @@ describe('[workflow]', () => {
 		const signedorder = await iexec.order.signRequestorder(order, {
 			checkRequest: false,
 		});
-		
+
 		const totalPrice = new BN(order.appmaxprice)
 			.add(new BN(order.datasetmaxprice))
 			.add(new BN(order.workerpoolmaxprice))
@@ -1272,15 +1273,15 @@ describe('[workflow]', () => {
 		const extendTaskRes = await iexec.task.extend(
 			showDealRes.tasks[taskIdx], '3600'
 		).catch((e) => e);
-		
+
 		expect(extendTaskRes instanceof Error).toBe(true);
-		
-		
+
+
 		const showTaskExtendedRes = await iexec.task.show(
 			showDealRes.tasks[taskIdx],
 		);
 		const showDealExtendedRes = await iexec.deal.show(matchOrdersRes.dealid);
-		
+
 		expect(showTaskExtendedRes.status).toBe(1);
 		expect(showTaskExtendedRes.dealid).toBe(matchOrdersRes.dealid);
 		expect(showTaskExtendedRes.idx.eq(new BN(taskIdx))).toBe(true);
@@ -1293,7 +1294,7 @@ describe('[workflow]', () => {
 		);
 		expect(showTaskExtendedRes.statusName).toBe('ACTIVE');
 	});
-	
+
 	test('show & interrupt task (initialized & uninitialized tasks)', async () => {
 		const signer = utils.getSignerFromPrivateKey(tokenChainUrl, PRIVATE_KEY);
 		const iexec = new IExec(
@@ -1429,7 +1430,7 @@ describe('[workflow]', () => {
 			showDealRes.tasks[taskIdx]
 		);
 		expect(interruptTaskRes).toBeDefined();
-		
+
 		const showTaskInterruptedRes = await iexec.task.show(
 			showDealRes.tasks[taskIdx],
 		);
@@ -4253,6 +4254,7 @@ describe('[order]', () => {
 			apprestrict: '0x0000000000000000000000000000000000000000',
 			category: '5',
 			taskmaxduration: '10000',
+			hardwaredescription: {},
 			datasetrestrict: '0x0000000000000000000000000000000000000000',
 			requesterrestrict: '0x0000000000000000000000000000000000000000',
 			tag: '0x0000000000000000000000000000000000000000000000000000000000000000',
@@ -4293,6 +4295,7 @@ describe('[order]', () => {
 			apprestrict,
 			category: '5',
 			taskmaxduration: '10000',
+			hardwaredescription: {},
 			datasetrestrict,
 			requesterrestrict,
 			tag: '0x0000000000000000000000000000000000000000000000000000000000000001',
@@ -4478,6 +4481,14 @@ describe('[order]', () => {
 		const order = await iexec.order.createWorkerpoolorder({
 			workerpool: address,
 			category: 5,
+			hardwaredescription: {
+				'min_cpu': '0',
+				'max_cpu': '0',
+				'min_ram': '0',
+				'max_ram': '0',
+				'min_bw': '0',
+				'max_bw': '0',
+			},
 		});
 
 		const res = await iexec.order.signWorkerpoolorder(order);
@@ -4485,6 +4496,7 @@ describe('[order]', () => {
 		expect(res.sign).toMatch(signRegex);
 		expect(res).toEqual({
 			...order,
+			...{ hardwaredescription: JSON.stringify(order.hardwaredescription) },
 			...{ sign: res.sign, salt: res.salt },
 		});
 	});
@@ -4720,7 +4732,7 @@ describe('[order]', () => {
 		});
 		expect(res).toMatch(bytes32Regex);
 		expect(res).toBe(
-			'0xd10228dc1aff84e4d54345cc66fd8eed2d9f7e35b1067c174137a1c3c6ab4dac',
+			'0x2c555656d2d6a12ad9e141cc28b2eb59b48cb059d934163ba422a221a1f1ebdc',
 		);
 	});
 

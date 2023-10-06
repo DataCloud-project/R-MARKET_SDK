@@ -47,6 +47,7 @@ const {
   nRlcAmountSchema,
   throwIfMissing,
   ValidationError,
+  objHardwaredescriptionSchema,
 } = require('../utils/validator');
 const {
   wrapCall,
@@ -142,6 +143,7 @@ const objDesc = {
       { name: 'workerpool', type: 'address' },
       { name: 'workerpoolprice', type: 'uint256' },
       { name: 'taskmaxduration', type: 'uint256' },
+      { name: 'hardwaredescription', type: 'string' },
       { name: 'volume', type: 'uint256' },
       { name: 'tag', type: 'bytes32' },
       { name: 'category', type: 'uint256' },
@@ -1397,8 +1399,10 @@ const createWorkerpoolorder = async (
     workerpool = throwIfMissing(),
     category = throwIfMissing(),
     workerpoolprice = '0',
+    taskmaxduration = '10000',
     volume = '1',
     trust = '0',
+    hardwaredescription = {},
     tag = NULL_BYTES32,
     apprestrict = NULL_ADDRESS,
     datasetrestrict = NULL_ADDRESS,
@@ -1409,7 +1413,10 @@ const createWorkerpoolorder = async (
     ethProvider: contracts.provider,
   }).validate(workerpool),
   workerpoolprice: await nRlcAmountSchema().validate(workerpoolprice),
-  taskmaxduration: await uint256Schema().validate('10000'),
+  taskmaxduration: await uint256Schema().validate(taskmaxduration),
+  hardwaredescription: await createObjHardwaredescription({
+      hardwaredescription,
+    }),
   volume: await uint256Schema().validate(volume),
   category: await uint256Schema().validate(category),
   trust: await uint256Schema().validate(trust),
@@ -1424,6 +1431,23 @@ const createWorkerpoolorder = async (
     ethProvider: contracts.provider,
   }).validate(requesterrestrict),
 });
+
+const createObjHardwaredescription = async ({
+  hardwaredescription = {},
+} = {}) => {
+  let inputHardwaredescription;
+  if (typeof hardwaredescription === 'string') {
+    try {
+      inputHardwaredescription = JSON.parse(hardwaredescription);
+    } catch (e) {
+      inputHardwaredescription = {};
+    }
+  } else {
+    inputHardwaredescription = hardwaredescription;
+  }
+  const objHardwaredescription = await objHardwaredescriptionSchema().validate(inputHardwaredescription);
+  return objHardwaredescription;
+};
 
 const createRequestorder = async (
   { contracts = throwIfMissing(), resultProxyURL = throwIfMissing() } = {},

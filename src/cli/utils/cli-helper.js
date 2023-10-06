@@ -382,6 +382,10 @@ const orderOption = {
     '--taskmaxduration <amount>',
     'specify the maximal duration of a task (seconds)',
   ],
+  hardwaredescription: () => [
+    '--hardwaredescription <json>',
+    'specify the hardware description of your workerpool (CPU, RAM, Storage, Bandwidth...)',
+  ],
   volume: () => ['--volume <volume>', 'number of run'],
   tag: () => ['--tag <tag>', 'specify tags\n* usage: --tag tag1,tag2'],
   category: () => ['--category <id>', 'id of the task category'],

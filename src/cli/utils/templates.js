@@ -1,4 +1,5 @@
 const { paramsKeyName } = require('../../common/utils/params-utils');
+const { hardwaredescriptionKeyName } = require('../../common/utils/validator');
 
 const main = {
   description:
@@ -93,6 +94,14 @@ const order = {
     workerpool: '0x0000000000000000000000000000000000000000',
     workerpoolprice: '0',
     taskmaxduration: '10000',
+    hardwaredescription: {
+      [hardwaredescriptionKeyName.MIN_CPU]: '0',
+      [hardwaredescriptionKeyName.MAX_CPU]: '0',
+      [hardwaredescriptionKeyName.MIN_RAM]: '0',
+      [hardwaredescriptionKeyName.MAX_RAM]: '0',
+      [hardwaredescriptionKeyName.MIN_BW]: '0',
+      [hardwaredescriptionKeyName.MAX_BW]: '0',
+    },
     volume: '1',
     category: '0',
     trust: '0',
